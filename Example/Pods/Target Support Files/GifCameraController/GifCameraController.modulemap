@@ -1,0 +1,6 @@
+framework module GifCameraController {
+  umbrella header "GifCameraController-umbrella.h"
+
+  export *
+  module * { export * }
+}

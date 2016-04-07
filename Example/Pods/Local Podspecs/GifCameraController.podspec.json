@@ -1,0 +1,25 @@
+{
+  "name": "GifCameraController",
+  "version": "0.1.0",
+  "summary": "A short description of GifCameraController.",
+  "description": "",
+  "homepage": "https://github.com/<GITHUB_USERNAME>/GifCameraController",
+  "license": "MIT",
+  "authors": {
+    "Lawrence Tran": "lawrence@tran.com"
+  },
+  "source": {
+    "git": "https://github.com/<GITHUB_USERNAME>/GifCameraController.git",
+    "tag": "0.1.0"
+  },
+  "platforms": {
+    "ios": "8.0"
+  },
+  "requires_arc": true,
+  "source_files": "Pod/Classes/**/*",
+  "resource_bundles": {
+    "GifCameraController": [
+      "Pod/Assets/*.png"
+    ]
+  }
+}
