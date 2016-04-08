@@ -22,8 +22,8 @@ public class GifCameraPreviewView: GLKView, PreviewTarget {
     var coreImageContext: CIContext!
     var drawableBounds: CGRect!
     
-    override public init(frame: CGRect, context: EAGLContext) {
-        super.init(frame: frame, context: context)
+    override public init(frame: CGRect) {
+        super.init(frame: frame, context: GifContextManager.sharedInstance.eaglContext)
         
         self.enableSetNeedsDisplay = false
         self.backgroundColor = UIColor.blackColor()
@@ -34,6 +34,7 @@ public class GifCameraPreviewView: GLKView, PreviewTarget {
         self.drawableBounds = self.bounds
         self.drawableBounds.size.width = CGFloat(self.drawableWidth)
         self.drawableBounds.size.height = CGFloat(self.drawableHeight)
+        self.coreImageContext = GifContextManager.sharedInstance.ciContext
     }
     
     deinit {
@@ -76,7 +77,7 @@ func CenterCropImageRect(sourceRect: CGRect, previewRect: CGRect) -> CGRect {
 }
 
 
-public class GifContextManager: NSObject {
+class GifContextManager: NSObject {
     
     static let sharedInstance = GifContextManager()
     

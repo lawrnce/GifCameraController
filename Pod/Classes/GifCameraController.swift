@@ -17,26 +17,52 @@ enum GifCameraControllerError : ErrorType {
     case FailedToAddOutput
 }
 
-@objc public protocol GifCameraControllerDelegate {
+public protocol GifCameraControllerDelegate {
     func controller(cameraController: GifCameraController, didFinishRecordingWithFrames frames: [CGImage], withTotalDuration duration: Double)
-    optional func controller(cameraController: GifCameraController, didAppendFrameNumber index: Int)
+    func controller(cameraController: GifCameraController, didAppendFrameNumber index: Int)
 }
 
 public class GifCameraController: NSObject {
     
     // MARK: - PUBLIC VARIABLES
+    
+    //
+    //
+    //
     public var delegate: GifCameraControllerDelegate?
+    
+    //
+    //
+    //
     public var maxDuration: Double!
+    
+    //
+    //
+    //
     public var framesPerSecond: Int!
-    public var currentDevicePosition: AVCaptureDevicePosition!
+    
+    //
+    //
+    //
     public var shouldTorch: Bool!
     
+    //  Returns the current device position. (read-only)
+    //
+    //
+    public private(set) var currentDevicePosition: AVCaptureDevicePosition!
+    
     // MARK: - PUBLIC METHODS
+    
+    //
+    //
+    //
     public func setupSession() throws -> Bool {
         self.captureSession = AVCaptureSession()
         self.captureSession.sessionPreset = AVCaptureSessionPresetiFrame1280x720
         self.maxDuration = 4.0
         self.framesPerSecond = 18
+        self.recording = false
+        self.paused = false
         self.videoDataOutputQueue = dispatch_queue_create("com.cakegifs.VideoDataOutputQueue", nil)
         do {
             try setupSessionInputs()
@@ -55,11 +81,19 @@ public class GifCameraController: NSObject {
         return true
     }
     
+    //  Sets the preview view for the camera output. The aspect ratio of the
+    //  preview view is stored to crop the frames.
+    //
     public func setPreviewView(view: GifCameraPreviewView) {
-        self.previewFrame = view.frame
+        
+        self.previewFrame = CGRect(x: 0, y: 0, width: 720,
+            height: view.frame.height * 720.0 / view.frame.width)
         self.previewTarget = view
     }
     
+    //
+    //
+    //
     public func startSession() {
         if !self.captureSession.running {
             dispatch_async(self.videoDataOutputQueue, { () -> Void in
@@ -68,6 +102,9 @@ public class GifCameraController: NSObject {
         }
     }
     
+    //
+    //
+    //
     public func stopSession() {
         if self.captureSession.running {
             dispatch_async(self.videoDataOutputQueue, { () -> Void in
@@ -76,10 +113,16 @@ public class GifCameraController: NSObject {
         }
     }
     
+    //
+    //
+    //
     public func isRecording() -> Bool {
         return self.recording
     }
     
+    //
+    //
+    //
     public func startRecording() {
         if !self.isRecording() {
             if self.bitmaps == nil {
@@ -90,6 +133,9 @@ public class GifCameraController: NSObject {
         }
     }
     
+    //
+    //
+    //
     public func pauseRecording() {
         if self.isRecording() == true {
             self.recording = false
@@ -97,6 +143,9 @@ public class GifCameraController: NSObject {
         }
     }
     
+    //
+    //
+    //
     public func cancelRecording() {
         toggleTorch(forceKill: true)
         self.bitmaps = nil
@@ -108,6 +157,9 @@ public class GifCameraController: NSObject {
         self.currentFrame = 0
     }
     
+    //
+    //
+    //
     public func stopRecording() {
         toggleTorch(forceKill: true)
 //        self.delegate?.controller(self, didFinishRecordingWithFrames: self.gifWriter.bitmaps, withTotalDuration: self.totalRecordedDuration!.seconds)
@@ -119,6 +171,9 @@ public class GifCameraController: NSObject {
         self.currentFrame = 0
     }
     
+    //
+    //
+    //
     public func toggleCamera() {
         self.captureSession.removeInput(self.activeVideoInput)
         
@@ -155,6 +210,9 @@ public class GifCameraController: NSObject {
         }
     }
     
+    //
+    //
+    //
     public func toggleTorch(forceKill forceKill: Bool) -> Bool {
         var isOn = Bool()
         let device = self.activeVideoInput.device
@@ -238,6 +296,7 @@ public class GifCameraController: NSObject {
                 throw GifCameraControllerError.FailedToAddInput
             }
             self.activeVideoInput = self.frontVideoInput
+            self.currentDevicePosition = .Front
         } catch let error as NSError {
             print(error.localizedDescription)
         }
@@ -311,6 +370,7 @@ extension GifCameraController: AVCaptureVideoDataOutputSampleBufferDelegate {
                 
                 self.totalRecordedDuration = CMSampleBufferGetPresentationTimeStamp(sampleBuffer) - self.differenceDuration
                 if self.totalRecordedDuration >= self.timePoints[self.currentFrame] {
+                    self.bitmaps.append(previewImage)
 //                    self.gifWriter.appendFrame(previewImage)
 //                    delegate?.controller(self, didAppendFrameNumber: self.gifWriter.frameCount)
                     if (self.timePoints.count - 1) == self.currentFrame {
