@@ -30,8 +30,8 @@ class ViewController: UIViewController {
     }
     
     private func setupPreviewView() {
-        self.previewView = GifCameraPreviewView(frame: CGRect(x: 0, y: 0,
-            width: UIScreen.mainScreen().bounds.width, height: UIScreen.mainScreen().bounds.height))
+        self.previewView = GifCameraPreviewView(frame: CGRect(x: 50, y: 50,
+            width: UIScreen.mainScreen().bounds.width-100, height: UIScreen.mainScreen().bounds.height-400))
         self.view.addSubview(self.previewView)
     }
     

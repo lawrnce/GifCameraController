@@ -17,9 +17,17 @@ enum GifCameraControllerError : ErrorType {
     case FailedToAddOutput
 }
 
-@objc public protocol GifCameraControllerDelegate {
-    func cameraController(cameraController: GifCameraController, didFinishRecordingWithFrames frames: [UIImage], withTotalDuration duration: Double)
-    optional func controller(cameraController: GifCameraController, didAppendFrameNumber index: Int)
+public protocol GifCameraControllerDelegate {
+    
+    //
+    //
+    //
+    func cameraController(cameraController: GifCameraController, didFinishRecordingWithFrames frames: [CGImage], withTotalDuration duration: Double)
+    
+    //
+    //
+    //
+    func controller(cameraController: GifCameraController, didAppendFrameNumber index: Int)
 }
 
 public class GifCameraController: NSObject {
@@ -85,8 +93,7 @@ public class GifCameraController: NSObject {
     //  preview view is stored to crop the frames.
     //
     public func setPreviewView(view: GifCameraPreviewView) {
-        self.previewFrame = CGRect(x: 0, y: 0, width: 720,
-            height: view.frame.height * 720.0 / view.frame.width)
+        self.previewBounds  = view.drawableBounds
         self.previewTarget = view
     }
     
@@ -238,7 +245,9 @@ public class GifCameraController: NSObject {
     
     // MARK: - PRIVATE VARIABLES
     private var bitmaps: [CIImage]!
-    private var previewFrame: CGRect!
+    
+    private var previewAspectRatio: Double!
+    private var previewBounds: CGRect!
     private var previewTarget: PreviewTarget?
     private var recording: Bool = false
     private var paused: Bool!
@@ -338,7 +347,8 @@ public class GifCameraController: NSObject {
     private func getCroppedPreviewImageFromBuffer(buffer: CMSampleBuffer) -> CIImage {
         let imageBuffer: CVPixelBufferRef = CMSampleBufferGetImageBuffer(buffer)!
         let sourceImage: CIImage = CIImage(CVPixelBuffer: imageBuffer).copy() as! CIImage
-        let croppedSourceImage = sourceImage.imageByCroppingToRect(self.previewFrame)
+        let cropRect = centerCropImageRect(sourceImage.extent, previewRect: self.previewBounds)
+        let croppedSourceImage = sourceImage.imageByCroppingToRect(cropRect)
         let transform: CGAffineTransform!
         if self.currentDevicePosition == .Front {
             transform = CGAffineTransformMakeScale(-1.0, 1.0)
@@ -347,6 +357,21 @@ public class GifCameraController: NSObject {
         }
         let correctedImage = croppedSourceImage.imageByApplyingTransform(transform)
         return correctedImage
+    }
+    
+    private func centerCropImageRect(sourceRect: CGRect, previewRect: CGRect) -> CGRect {
+        let sourceAspectRatio: CGFloat = sourceRect.size.width / sourceRect.size.height
+        let previewAspectRatio: CGFloat = previewRect.size.width  / previewRect.size.height
+        var drawRect = sourceRect
+        if (sourceAspectRatio > previewAspectRatio) {
+            let scaledHeight = drawRect.size.height * previewAspectRatio
+            drawRect.origin.x += (drawRect.size.width - scaledHeight) / 2.0
+            drawRect.size.width = scaledHeight
+        } else {
+            drawRect.origin.y += (drawRect.size.height - drawRect.size.width / previewAspectRatio) / 2.0
+            drawRect.size.height = drawRect.size.width / previewAspectRatio
+        }
+        return drawRect
     }
 }
 
@@ -370,8 +395,8 @@ extension GifCameraController: AVCaptureVideoDataOutputSampleBufferDelegate {
                 self.totalRecordedDuration = CMSampleBufferGetPresentationTimeStamp(sampleBuffer) - self.differenceDuration
                 if self.totalRecordedDuration >= self.timePoints[self.currentFrame] {
                     self.bitmaps.append(previewImage)
-//                    self.gifWriter.appendFrame(previewImage)
-//                    delegate?.controller(self, didAppendFrameNumber: self.gifWriter.frameCount)
+                    delegate?.controller(self, didAppendFrameNumber: self.bitmaps.count)
+                    
                     if (self.timePoints.count - 1) == self.currentFrame {
                         self.stopRecording()
                     } else {
