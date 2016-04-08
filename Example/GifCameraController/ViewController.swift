@@ -24,9 +24,13 @@ class ViewController: UIViewController {
         self.gifCamera.startSession()
     }
     
+    override func prefersStatusBarHidden() -> Bool {
+        return true
+    }
+    
     private func setupPreviewView() {
-        self.previewView = GifCameraPreviewView(frame: CGRect(x: 0, y: 64.0,
-            width: UIScreen.mainScreen().bounds.width, height: UIScreen.mainScreen().bounds.width))
+        self.previewView = GifCameraPreviewView(frame: CGRect(x: 0, y: 0,
+            width: UIScreen.mainScreen().bounds.width, height: UIScreen.mainScreen().bounds.height))
         self.view.addSubview(self.previewView)
     }
     

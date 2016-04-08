@@ -85,7 +85,6 @@ public class GifCameraController: NSObject {
     //  preview view is stored to crop the frames.
     //
     public func setPreviewView(view: GifCameraPreviewView) {
-        
         self.previewFrame = CGRect(x: 0, y: 0, width: 720,
             height: view.frame.height * 720.0 / view.frame.width)
         self.previewTarget = view
@@ -339,7 +338,7 @@ public class GifCameraController: NSObject {
     private func getCroppedPreviewImageFromBuffer(buffer: CMSampleBuffer) -> CIImage {
         let imageBuffer: CVPixelBufferRef = CMSampleBufferGetImageBuffer(buffer)!
         let sourceImage: CIImage = CIImage(CVPixelBuffer: imageBuffer).copy() as! CIImage
-        let croppedSourceImage = sourceImage.imageByCroppingToRect(CGRectMake(0, 0, 720, 720))
+        let croppedSourceImage = sourceImage.imageByCroppingToRect(self.previewFrame)
         let transform: CGAffineTransform!
         if self.currentDevicePosition == .Front {
             transform = CGAffineTransformMakeScale(-1.0, 1.0)
