@@ -11,8 +11,9 @@ import GifCameraController
 
 class ViewController: UIViewController {
 
+    @IBOutlet weak var previewView: GifCameraPreviewView!
     var gifCamera: GifCameraController!
-    var previewView: GifCameraPreviewView!
+//    var previewView: GifCameraPreviewView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -45,7 +46,7 @@ class ViewController: UIViewController {
         do {
             if try self.gifCamera.setupSession() {
 //                self.gifCamera.delegate = self
-                setupPreviewView()
+//                setupPreviewView()
                 self.gifCamera.setPreviewView(self.previewView)
             }
         }
@@ -62,3 +63,8 @@ class ViewController: UIViewController {
 
 }
 
+//extension ViewController: GifCameraControllerDelegate {
+//    func controller(cameraController: GifCameraController, didFinishRecordingWithFrames frames: [CGImage], withTotalDuration duration: Double) {
+//        
+//    }
+//}

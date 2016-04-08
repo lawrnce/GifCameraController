@@ -24,7 +24,17 @@ public class GifCameraPreviewView: GLKView, PreviewTarget {
     
     override public init(frame: CGRect) {
         super.init(frame: frame, context: GifContextManager.sharedInstance.eaglContext)
-        
+        setup()
+
+    }
+    
+    required public init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        self.context = GifContextManager.sharedInstance.eaglContext
+        setup()
+    }
+    
+    func setup() {
         self.enableSetNeedsDisplay = false
         self.backgroundColor = UIColor.blackColor()
         self.opaque = true
@@ -35,14 +45,6 @@ public class GifCameraPreviewView: GLKView, PreviewTarget {
         self.drawableBounds.size.width = CGFloat(self.drawableWidth)
         self.drawableBounds.size.height = CGFloat(self.drawableHeight)
         self.coreImageContext = GifContextManager.sharedInstance.ciContext
-    }
-    
-    deinit {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
-    }
-    
-    required public init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
     }
     
     func filterChanged(notification: NSNotification) {
@@ -72,7 +74,6 @@ func CenterCropImageRect(sourceRect: CGRect, previewRect: CGRect) -> CGRect {
         drawRect.origin.y += (drawRect.size.height - drawRect.size.width / previewAspectRatio) / 2.0
         drawRect.size.height = drawRect.size.width / previewAspectRatio
     }
-    
     return drawRect
 }
 

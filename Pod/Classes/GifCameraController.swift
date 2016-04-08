@@ -17,27 +17,27 @@ enum GifCameraControllerError : ErrorType {
     case FailedToAddOutput
 }
 
-public protocol GifCameraControllerDelegate {
-    func controller(cameraController: GifCameraController, didFinishRecordingWithFrames frames: [CGImage], withTotalDuration duration: Double)
-    func controller(cameraController: GifCameraController, didAppendFrameNumber index: Int)
+@objc public protocol GifCameraControllerDelegate {
+    func cameraController(cameraController: GifCameraController, didFinishRecordingWithFrames frames: [UIImage], withTotalDuration duration: Double)
+    optional func controller(cameraController: GifCameraController, didAppendFrameNumber index: Int)
 }
 
 public class GifCameraController: NSObject {
     
     // MARK: - PUBLIC VARIABLES
     
-    //
+    //  Delegate
     //
     //
     public var delegate: GifCameraControllerDelegate?
     
-    //
-    //
+    //  Set the maximum duration of the gif.
+    //  Defaults to 4 seconds.
     //
     public var maxDuration: Double!
     
-    //
-    //
+    //  Set the capture rate.
+    //  Defaults to 18 fps.
     //
     public var framesPerSecond: Int!
     
@@ -53,7 +53,7 @@ public class GifCameraController: NSObject {
     
     // MARK: - PUBLIC METHODS
     
-    //
+    //  Sets the capture session. This must be called in a do block.
     //
     //
     public func setupSession() throws -> Bool {
