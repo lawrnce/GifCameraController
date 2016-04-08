@@ -16,53 +16,37 @@
                     <view key="view" contentMode="scaleToFill" id="kh9-bI-dsS">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="W5v-fJ-I2l" customClass="GifCameraPreviewView" customModule="GifCameraController">
-                                <rect key="frame" x="50" y="50" width="275" height="217"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="128" id="RjO-2b-oe0"/>
-                                    <constraint firstAttribute="width" constant="240" id="z9Y-1s-oZB"/>
-                                </constraints>
-                                <variation key="default">
-                                    <mask key="constraints">
-                                        <exclude reference="RjO-2b-oe0"/>
-                                        <exclude reference="z9Y-1s-oZB"/>
-                                    </mask>
-                                </variation>
-                            </view>
-                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                        <constraints>
-                            <constraint firstAttribute="trailing" secondItem="W5v-fJ-I2l" secondAttribute="trailing" constant="30" id="0VJ-Kd-41m"/>
-                            <constraint firstAttribute="trailing" secondItem="W5v-fJ-I2l" secondAttribute="trailing" constant="50" id="7hr-Us-HAT"/>
-                            <constraint firstItem="W5v-fJ-I2l" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" constant="30" id="9GZ-Em-8oe"/>
-                            <constraint firstItem="W5v-fJ-I2l" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" constant="50" id="LFE-o4-g95"/>
-                            <constraint firstItem="W5v-fJ-I2l" firstAttribute="centerX" secondItem="kh9-bI-dsS" secondAttribute="centerX" id="Mnb-Zc-dcN"/>
-                            <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="W5v-fJ-I2l" secondAttribute="bottom" constant="200" id="Nk8-gf-y1X"/>
-                            <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="W5v-fJ-I2l" secondAttribute="bottom" constant="400" id="SNb-Aq-RIl"/>
-                            <constraint firstItem="W5v-fJ-I2l" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="gwm-RX-dKM"/>
-                            <constraint firstItem="W5v-fJ-I2l" firstAttribute="centerY" secondItem="kh9-bI-dsS" secondAttribute="centerY" id="jTw-hO-I5p"/>
-                            <constraint firstItem="W5v-fJ-I2l" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" constant="200" id="roS-mp-XS0"/>
-                        </constraints>
-                        <variation key="default">
-                            <mask key="constraints">
-                                <exclude reference="0VJ-Kd-41m"/>
-                                <exclude reference="Mnb-Zc-dcN"/>
-                                <exclude reference="gwm-RX-dKM"/>
-                                <exclude reference="jTw-hO-I5p"/>
-                                <exclude reference="roS-mp-XS0"/>
-                                <exclude reference="Nk8-gf-y1X"/>
-                            </mask>
-                        </variation>
                     </view>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
-                    <connections>
-                        <outlet property="previewView" destination="W5v-fJ-I2l" id="mc9-Lq-nwR"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="501.5" y="389.5"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="qZu-uB-jCz">
+            <objects>
+                <viewController id="Rcp-8d-l65" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="eFm-qL-WjR"/>
+                        <viewControllerLayoutGuide type="bottom" id="QCU-d8-cYs"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="CDf-Xx-kEb">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gZZ-xf-86w">
+                                <rect key="frame" x="67" y="228" width="240" height="211"/>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="NAk-6t-zSr" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="926.5" y="389.5"/>
         </scene>
     </scenes>
 </document>

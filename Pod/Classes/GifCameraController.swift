@@ -22,7 +22,7 @@ public protocol GifCameraControllerDelegate {
     //  Returns to the delegate the bitmaps the frames along with the duration of the gif.
     //
     //
-    func cameraController(cameraController: GifCameraController, didFinishRecordingWithFrames frames: [CIImage], withTotalDuration duration: Double)
+    func cameraController(cameraController: GifCameraController, didFinishRecordingWithFrames frames: [CGImage], withTotalDuration duration: Double)
     
     //  Notifies the delegate that a frame was appended.
     //
@@ -240,7 +240,7 @@ public class GifCameraController: NSObject {
     }
     
     // MARK: - PRIVATE VARIABLES
-    private var bitmaps: [CIImage]!
+    private var bitmaps: [CGImage]!
     
     private var previewAspectRatio: Double!
     private var previewBounds: CGRect!
@@ -266,6 +266,7 @@ public class GifCameraController: NSObject {
     private var shouldTorch: Bool!
     
     private func prepareForRecording() {
+        self.bitmaps = [CGImage]()
         self.pausedDuration = CMTime(seconds: 0, preferredTimescale: 600)
         self.paused = false
         let totalFrames = self.getTotalFrames()
@@ -370,6 +371,11 @@ public class GifCameraController: NSObject {
         }
         return drawRect
     }
+    
+    private func convertCIImageToCGImage(inputImage: CIImage) -> CGImage! {
+        let context = CIContext(options: nil)
+        return context.createCGImage(inputImage, fromRect: inputImage.extent)
+    }
 }
 
 extension GifCameraController: AVCaptureVideoDataOutputSampleBufferDelegate {
@@ -391,7 +397,8 @@ extension GifCameraController: AVCaptureVideoDataOutputSampleBufferDelegate {
                 
                 self.totalRecordedDuration = CMSampleBufferGetPresentationTimeStamp(sampleBuffer) - self.differenceDuration
                 if self.totalRecordedDuration >= self.timePoints[self.currentFrame] {
-                    self.bitmaps.append(previewImage)
+                    
+                    self.bitmaps.append(convertCIImageToCGImage(previewImage))
                     delegate?.cameraController(self, didAppendFrameNumber: self.bitmaps.count)
                     
                     if (self.timePoints.count - 1) == self.currentFrame {

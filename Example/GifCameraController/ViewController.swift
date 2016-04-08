@@ -11,9 +11,9 @@ import GifCameraController
 
 class ViewController: UIViewController {
 
-    @IBOutlet weak var previewView: GifCameraPreviewView!
     var gifCamera: GifCameraController!
-//    var previewView: GifCameraPreviewView!
+    var previewView: GifCameraPreviewView!
+    var recordButton: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,23 +30,31 @@ class ViewController: UIViewController {
     }
     
     private func setupPreviewView() {
-        self.previewView = GifCameraPreviewView(frame: CGRect(x: 50, y: 50,
-            width: UIScreen.mainScreen().bounds.width-100, height: UIScreen.mainScreen().bounds.height-400))
+        self.previewView = GifCameraPreviewView(frame: CGRect(x: 0, y: 0,
+            width: UIScreen.mainScreen().bounds.width, height: UIScreen.mainScreen().bounds.height))
         self.view.addSubview(self.previewView)
     }
     
+    private func setupRecordButton() {
+        self.recordButton = UIButton(frame: CGRect(x: 0, y: 0, width: 80, height: 80))
+        self.recordButton.addTarget(self, action: Selector("recordButtonPressed:"), forControlEvents: .TouchUpInside)
+        self.recordButton.backgroundColor = UIColor.redColor()
+        self.recordButton.layer.cornerRadius = 40.0
+        self.recordButton.clipsToBounds = true
+        self.recordButton.center = CGPoint(x: UIScreen.mainScreen().bounds.width / 2.0,
+            y: UIScreen.mainScreen().bounds.height * 0.9)
+        self.view.addSubview(self.recordButton)
+    }
+    
     private func setupCameraController() {
-        // Setup Camera Controller
-        if self.gifCamera != nil {
-            return
-        }
-        
         self.gifCamera = GifCameraController()
-        
         do {
             if try self.gifCamera.setupSession() {
-//                self.gifCamera.delegate = self
-//                setupPreviewView()
+                self.gifCamera.delegate = self
+                self.gifCamera.maxDuration = 1.0
+                self.gifCamera.framesPerSecond = 10
+                setupPreviewView()
+                setupRecordButton()
                 self.gifCamera.setPreviewView(self.previewView)
             }
         }
@@ -60,11 +68,45 @@ class ViewController: UIViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
+    
+    // MARK: - Actions
+    func recordButtonPressed(sender: UIButton) {
+        self.gifCamera.startRecording()
+    }
 }
 
-//extension ViewController: GifCameraControllerDelegate {
-//    func controller(cameraController: GifCameraController, didFinishRecordingWithFrames frames: [CGImage], withTotalDuration duration: Double) {
-//        
-//    }
-//}
+extension ViewController: GifCameraControllerDelegate {
+    
+    //  Flash the screen when a new frame is taken
+    //
+    //
+    func cameraController(cameraController: GifCameraController, didAppendFrameNumber index: Int) {
+        dispatch_async(dispatch_get_main_queue()) { () -> Void in
+            UIView.animateWithDuration(0.05, animations: { () -> Void in
+                self.previewView.alpha = 0.0
+                }) { (done) -> Void in
+                    UIView.animateWithDuration(0.05, animations: { () -> Void in
+                        self.previewView.alpha = 1.0
+                        }, completion: { (done) -> Void in
+                            
+                    })
+            }
+        }
+    }
+    
+    //  Open gif in new view
+    //
+    //
+    func cameraController(cameraController: GifCameraController, didFinishRecordingWithFrames frames: [CGImage], withTotalDuration duration: Double) {
+        let previewVC = PreviewViewController()
+        previewVC.bitmaps = frames
+        presentViewController(previewVC, animated: true) { () -> Void in
+            
+        }
+    }
+}
+
+
+
+
+

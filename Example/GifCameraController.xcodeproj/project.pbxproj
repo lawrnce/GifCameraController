@@ -15,6 +15,7 @@
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
 		607FACEC1AFB9204008FA782 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* Tests.swift */; };
 		DBE000E63CFFDA234BCA1C91 /* Pods_GifCameraController_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E2544459DA0C56E14AA80F3 /* Pods_GifCameraController_Tests.framework */; };
+		E67B78D11CB846E000146362 /* PreviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E67B78D01CB846E000146362 /* PreviewViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,6 +46,7 @@
 		607FACEA1AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACEB1AFB9204008FA782 /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
 		738EDF87BAD84350C8AD4D50 /* GifCameraController.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = GifCameraController.podspec; path = ../GifCameraController.podspec; sourceTree = "<group>"; };
+		E67B78D01CB846E000146362 /* PreviewViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreviewViewController.swift; sourceTree = "<group>"; };
 		E75F79FEFDC8AB642C3A2D65 /* Pods-GifCameraController_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GifCameraController_Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-GifCameraController_Example/Pods-GifCameraController_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		F0E0121E987954DF186ECD4E /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -95,6 +97,7 @@
 			children = (
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
 				607FACD71AFB9204008FA782 /* ViewController.swift */,
+				E67B78D01CB846E000146362 /* PreviewViewController.swift */,
 				607FACD91AFB9204008FA782 /* Main.storyboard */,
 				607FACDC1AFB9204008FA782 /* Images.xcassets */,
 				607FACDE1AFB9204008FA782 /* LaunchScreen.xib */,
@@ -361,6 +364,7 @@
 			files = (
 				607FACD81AFB9204008FA782 /* ViewController.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
+				E67B78D11CB846E000146362 /* PreviewViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
