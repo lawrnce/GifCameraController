@@ -19,15 +19,15 @@ enum GifCameraControllerError : ErrorType {
 
 public protocol GifCameraControllerDelegate {
     
+    //  Returns to the delegate the bitmaps the frames along with the duration of the gif.
     //
     //
-    //
-    func cameraController(cameraController: GifCameraController, didFinishRecordingWithFrames frames: [CGImage], withTotalDuration duration: Double)
+    func cameraController(cameraController: GifCameraController, didFinishRecordingWithFrames frames: [CIImage], withTotalDuration duration: Double)
     
+    //  Notifies the delegate that a frame was appended.
     //
     //
-    //
-    func controller(cameraController: GifCameraController, didAppendFrameNumber index: Int)
+    func cameraController(cameraController: GifCameraController, didAppendFrameNumber index: Int)
 }
 
 public class GifCameraController: NSObject {
@@ -48,11 +48,6 @@ public class GifCameraController: NSObject {
     //  Defaults to 18 fps.
     //
     public var framesPerSecond: Int!
-    
-    //
-    //
-    //
-    public var shouldTorch: Bool!
     
     //  Returns the current device position. (read-only)
     //
@@ -97,7 +92,7 @@ public class GifCameraController: NSObject {
         self.previewTarget = view
     }
     
-    //
+    //  Starts the capture session.
     //
     //
     public func startSession() {
@@ -108,7 +103,7 @@ public class GifCameraController: NSObject {
         }
     }
     
-    //
+    //  Stops the capture session.
     //
     //
     public func stopSession() {
@@ -119,14 +114,14 @@ public class GifCameraController: NSObject {
         }
     }
     
-    //
+    //  Returns if session is recording.
     //
     //
     public func isRecording() -> Bool {
         return self.recording
     }
     
-    //
+    //  Starts recording.
     //
     //
     public func startRecording() {
@@ -139,8 +134,8 @@ public class GifCameraController: NSObject {
         }
     }
     
-    //
-    //
+    //  Pauses recording.
+    //  Does not reset variables.
     //
     public func pauseRecording() {
         if self.isRecording() == true {
@@ -149,7 +144,7 @@ public class GifCameraController: NSObject {
         }
     }
     
-    //
+    //  Stops recording and resets all variables.
     //
     //
     public func cancelRecording() {
@@ -163,21 +158,22 @@ public class GifCameraController: NSObject {
         self.currentFrame = 0
     }
     
-    //
+    //  Ends the recording
     //
     //
     public func stopRecording() {
         toggleTorch(forceKill: true)
-//        self.delegate?.controller(self, didFinishRecordingWithFrames: self.gifWriter.bitmaps, withTotalDuration: self.totalRecordedDuration!.seconds)
+        self.delegate?.cameraController(self, didFinishRecordingWithFrames: self.bitmaps!, withTotalDuration: self.totalRecordedDuration.seconds)
         self.totalRecordedDuration = nil
         self.differenceDuration = nil
+        self.bitmaps = nil
         self.pausedDuration = CMTime(seconds: 0, preferredTimescale: 600)
         self.recording = false
         self.paused = false
         self.currentFrame = 0
     }
     
-    //
+    //  Toggles between the front camera and the back.
     //
     //
     public func toggleCamera() {
@@ -216,8 +212,8 @@ public class GifCameraController: NSObject {
         }
     }
     
-    //
-    //
+    //  Toggles the torch and returns if the torch is on.
+    //  Set forceKill to true to turn off the torch.
     //
     public func toggleTorch(forceKill forceKill: Bool) -> Bool {
         var isOn = Bool()
@@ -267,6 +263,7 @@ public class GifCameraController: NSObject {
     private var activeVideoInput: AVCaptureDeviceInput!
     private var frontVideoInput: AVCaptureDeviceInput!
     private var backVideoInput: AVCaptureDeviceInput!
+    private var shouldTorch: Bool!
     
     private func prepareForRecording() {
         self.pausedDuration = CMTime(seconds: 0, preferredTimescale: 600)
@@ -395,7 +392,7 @@ extension GifCameraController: AVCaptureVideoDataOutputSampleBufferDelegate {
                 self.totalRecordedDuration = CMSampleBufferGetPresentationTimeStamp(sampleBuffer) - self.differenceDuration
                 if self.totalRecordedDuration >= self.timePoints[self.currentFrame] {
                     self.bitmaps.append(previewImage)
-                    delegate?.controller(self, didAppendFrameNumber: self.bitmaps.count)
+                    delegate?.cameraController(self, didAppendFrameNumber: self.bitmaps.count)
                     
                     if (self.timePoints.count - 1) == self.currentFrame {
                         self.stopRecording()
