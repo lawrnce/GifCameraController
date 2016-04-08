@@ -98,10 +98,10 @@ extension ViewController: GifCameraControllerDelegate {
     //
     //
     func cameraController(cameraController: GifCameraController, didFinishRecordingWithFrames frames: [CGImage], withTotalDuration duration: Double) {
-        let previewVC = PreviewViewController()
+        let previewVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("previewVC") as! PreviewViewController
         previewVC.bitmaps = frames
-        presentViewController(previewVC, animated: true) { () -> Void in
-            
+        previewVC.duration = duration
+        presentViewController(previewVC, animated: true) { () -> Void in            
         }
     }
 }

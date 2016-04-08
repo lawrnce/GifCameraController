@@ -24,10 +24,10 @@
             </objects>
             <point key="canvasLocation" x="501.5" y="389.5"/>
         </scene>
-        <!--View Controller-->
+        <!--Preview View Controller-->
         <scene sceneID="qZu-uB-jCz">
             <objects>
-                <viewController id="Rcp-8d-l65" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="previewVC" id="Rcp-8d-l65" customClass="PreviewViewController" customModule="GifCameraController_Example" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="eFm-qL-WjR"/>
                         <viewControllerLayoutGuide type="bottom" id="QCU-d8-cYs"/>
@@ -36,13 +36,52 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gZZ-xf-86w">
-                                <rect key="frame" x="67" y="228" width="240" height="211"/>
-                            </imageView>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ofb-CD-OJZ">
+                                <rect key="frame" x="0.0" y="623" width="375" height="44"/>
+                                <items>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="ibf-f2-a1W"/>
+                                    <barButtonItem title="save" id="rDk-83-Gt2">
+                                        <connections>
+                                            <action selector="saveButtonPressed:" destination="Rcp-8d-l65" id="fln-up-NZO"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="NZn-qm-hEU"/>
+                                    <barButtonItem title="close" id="3AO-nm-Cev">
+                                        <connections>
+                                            <action selector="closeButtonPressed:" destination="Rcp-8d-l65" id="ukH-eC-IG6"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="MMg-Tc-0uV"/>
+                                </items>
+                            </toolbar>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="Ors-Rt-wQP">
+                                <rect key="frame" x="169" y="315" width="37" height="37"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="60" id="7hh-7u-hbf"/>
+                                    <constraint firstAttribute="width" constant="60" id="Tiv-bx-vpN"/>
+                                </constraints>
+                                <color key="color" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <variation key="default">
+                                    <mask key="constraints">
+                                        <exclude reference="7hh-7u-hbf"/>
+                                        <exclude reference="Tiv-bx-vpN"/>
+                                    </mask>
+                                </variation>
+                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="ofb-CD-OJZ" secondAttribute="trailing" id="6Yv-Ph-s3h"/>
+                            <constraint firstItem="Ors-Rt-wQP" firstAttribute="centerX" secondItem="CDf-Xx-kEb" secondAttribute="centerX" id="8HY-Zp-X6B"/>
+                            <constraint firstItem="ofb-CD-OJZ" firstAttribute="leading" secondItem="CDf-Xx-kEb" secondAttribute="leading" id="WHL-e4-G5c"/>
+                            <constraint firstItem="QCU-d8-cYs" firstAttribute="top" secondItem="ofb-CD-OJZ" secondAttribute="bottom" id="ZjA-fO-Dfr"/>
+                            <constraint firstItem="Ors-Rt-wQP" firstAttribute="centerY" secondItem="CDf-Xx-kEb" secondAttribute="centerY" id="tZr-My-sF2"/>
+                        </constraints>
                     </view>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
+                    <connections>
+                        <outlet property="activityIndicator" destination="Ors-Rt-wQP" id="Zib-9U-alp"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="NAk-6t-zSr" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
