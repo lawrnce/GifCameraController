@@ -52,7 +52,7 @@ class ViewController: UIViewController {
             if try self.gifCamera.setupSession() {
                 self.gifCamera.delegate = self
                 self.gifCamera.maxDuration = 2.0
-                self.gifCamera.framesPerSecond = 3
+                self.gifCamera.framesPerSecond = 16
                 setupPreviewView()
                 setupRecordButton()
                 self.gifCamera.setPreviewView(self.previewView)
