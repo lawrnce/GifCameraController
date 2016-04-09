@@ -66,12 +66,11 @@ public class GifCameraController: NSObject {
         self.framesPerSecond = 18
         self.recording = false
         self.paused = false
+        self.shouldTorch = false
         self.videoDataOutputQueue = dispatch_queue_create("com.cakegifs.VideoDataOutputQueue", nil)
         do {
             try setupSessionInputs()
             try setupSessionOutputs()
-            self.currentFrame = 0
-            self.timePoints = [CMTime]()
         }
         catch GifCameraControllerError.FailedToAddInput {
             print("Failed to add camera input")
@@ -156,6 +155,7 @@ public class GifCameraController: NSObject {
         self.recording = false
         self.paused = false
         self.currentFrame = 0
+        self.timePoints = nil
     }
     
     //  Ends the recording
@@ -166,6 +166,7 @@ public class GifCameraController: NSObject {
         self.delegate?.cameraController(self, didFinishRecordingWithFrames: self.bitmaps!, withTotalDuration: self.totalRecordedDuration.seconds)
         self.totalRecordedDuration = nil
         self.differenceDuration = nil
+        self.timePoints = nil
         self.bitmaps = nil
         self.pausedDuration = CMTime(seconds: 0, preferredTimescale: 600)
         self.recording = false
@@ -183,12 +184,12 @@ public class GifCameraController: NSObject {
             if self.activeVideoInput.device == self.frontCameraDevice {
                 self.activeVideoInput = nil
                 self.activeVideoInput = try AVCaptureDeviceInput(device: self.backCameraDevice)
-                self.currentDevicePosition = .Front
+                self.currentDevicePosition = .Back
                 
             } else if self.activeVideoInput.device == self.backCameraDevice {
                 self.activeVideoInput = nil
                 self.activeVideoInput = try AVCaptureDeviceInput(device: self.frontCameraDevice)
-                self.currentDevicePosition = .Back
+                self.currentDevicePosition = .Front
             }
             
             if self.captureSession.canAddInput(self.activeVideoInput) {
@@ -269,6 +270,8 @@ public class GifCameraController: NSObject {
         self.bitmaps = [CGImage]()
         self.pausedDuration = CMTime(seconds: 0, preferredTimescale: 600)
         self.paused = false
+        self.currentFrame = 0
+        self.timePoints = [CMTime]()
         let totalFrames = self.getTotalFrames()
         let increment = self.maxDuration / Double(totalFrames)
         for frameNumber in 0 ..< totalFrames {
@@ -397,7 +400,7 @@ extension GifCameraController: AVCaptureVideoDataOutputSampleBufferDelegate {
                 
                 self.totalRecordedDuration = CMSampleBufferGetPresentationTimeStamp(sampleBuffer) - self.differenceDuration
                 if self.totalRecordedDuration >= self.timePoints[self.currentFrame] {
-                    
+                
                     self.bitmaps.append(convertCIImageToCGImage(previewImage))
                     delegate?.cameraController(self, didAppendFrameNumber: self.bitmaps.count)
                     
@@ -413,6 +416,14 @@ extension GifCameraController: AVCaptureVideoDataOutputSampleBufferDelegate {
                 }
             }
         }
-
     }
 }
+
+
+
+
+
+
+
+
+

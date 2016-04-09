@@ -51,11 +51,12 @@ class ViewController: UIViewController {
         do {
             if try self.gifCamera.setupSession() {
                 self.gifCamera.delegate = self
-                self.gifCamera.maxDuration = 1.0
-                self.gifCamera.framesPerSecond = 10
+                self.gifCamera.maxDuration = 2.0
+                self.gifCamera.framesPerSecond = 3
                 setupPreviewView()
                 setupRecordButton()
                 self.gifCamera.setPreviewView(self.previewView)
+                self.gifCamera.toggleCamera()
             }
         }
         catch let error as NSError {
@@ -81,11 +82,14 @@ extension ViewController: GifCameraControllerDelegate {
     //
     //
     func cameraController(cameraController: GifCameraController, didAppendFrameNumber index: Int) {
+        
+        print(index, NSDate().timeIntervalSince1970)
+        
         dispatch_async(dispatch_get_main_queue()) { () -> Void in
-            UIView.animateWithDuration(0.05, animations: { () -> Void in
-                self.previewView.alpha = 0.0
+            UIView.animateWithDuration(0.08, animations: { () -> Void in
+                self.previewView.alpha = 0.7
                 }) { (done) -> Void in
-                    UIView.animateWithDuration(0.05, animations: { () -> Void in
+                    UIView.animateWithDuration(0.08, animations: { () -> Void in
                         self.previewView.alpha = 1.0
                         }, completion: { (done) -> Void in
                             
