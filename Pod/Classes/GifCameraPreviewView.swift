@@ -13,10 +13,10 @@ import GLKit
 import AVFoundation
 
 protocol PreviewTarget {
-    func setImage(image: CIImage)
+    func setImage(_ image: CIImage)
 }
 
-public class GifCameraPreviewView: GLKView, PreviewTarget {
+open class GifCameraPreviewView: GLKView, PreviewTarget {
     
     var coreImageContext: CIContext!
     var drawableBounds: CGRect!
@@ -24,9 +24,9 @@ public class GifCameraPreviewView: GLKView, PreviewTarget {
     override public init(frame: CGRect) {
         super.init(frame: frame, context: GifContextManager.sharedInstance.eaglContext)
         self.enableSetNeedsDisplay = false
-        self.opaque = true
+        self.isOpaque = true
         self.frame = frame
-        self.backgroundColor = UIColor.cyanColor()
+        self.backgroundColor = UIColor.cyan
         
         self.bindDrawable()
         self.drawableBounds = self.bounds
@@ -39,9 +39,9 @@ public class GifCameraPreviewView: GLKView, PreviewTarget {
         super.init(coder: aDecoder)
     }
     
-    func setImage(sourceImage: CIImage) {
+    func setImage(_ sourceImage: CIImage) {
         self.bindDrawable()
-        self.coreImageContext.drawImage(sourceImage, inRect: self.drawableBounds, fromRect: sourceImage.extent)
+        self.coreImageContext.draw(sourceImage, in: self.drawableBounds, from: sourceImage.extent)
         self.display()
     }
 }
@@ -52,8 +52,8 @@ class GifContextManager: NSObject {
     var ciContext: CIContext!
     override init() {
         super.init()
-        self.eaglContext = EAGLContext(API: .OpenGLES2)
+        self.eaglContext = EAGLContext(api: .openGLES2)
         let options: [String : AnyObject] = [kCIContextWorkingColorSpace: NSNull()]
-        self.ciContext = CIContext(EAGLContext: self.eaglContext, options: options)
+        self.ciContext = CIContext(eaglContext: self.eaglContext, options: options)
     }
 }
