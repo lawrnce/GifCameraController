@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "GifCameraController"
-  s.version          = "0.1.0"
+  s.version          = "0.2.0"
   s.summary          = "Camera output that takes successive photos to create GIFs"
 
 # This description is used to generate tags and improve search results.
@@ -27,13 +27,13 @@ Gif Camera Controller is an implementation of AVCaptureVideoDataOuput to takes s
   s.source           = { :git => "https://github.com/lawrnce/GifCameraController.git", :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
-  s.platform     = :ios, '8.0'
+  s.platform     = :ios, '9.0'
   s.requires_arc = true
 
   s.source_files = 'Pod/Classes/**/*'
-  s.resource_bundles = {
-    'GifCameraController' => ['Pod/Assets/*.png']
-  }
+  # s.resource_bundles = {
+  #   'GifCameraController' => ['Pod/Assets/*.png']
+  # }
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
   # s.frameworks = 'UIKit', 'MapKit'
