@@ -24,10 +24,10 @@ class PreviewViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupGif()
-        self.view.backgroundColor = UIColor.whiteColor()
+        self.view.backgroundColor = UIColor.white
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.activityIndicator.hidesWhenStopped = true
     }
@@ -36,44 +36,44 @@ class PreviewViewController: UIViewController {
         super.didReceiveMemoryWarning()
     }
     
-    private func setupGif(){
+    fileprivate func setupGif(){
         var frames = [UIImage]()
         for bitmap in bitmaps {
-            let image = UIImage(CGImage: bitmap)
+            let image = UIImage(cgImage: bitmap)
             frames.append(image)
         }
-        let gif = UIImage.animatedImageWithImages(frames, duration: self.duration)
-        self.gifView = UIImageView(frame: CGRect(x: 0, y: 0, width: UIScreen.mainScreen().bounds.width / 2.0, height: UIScreen.mainScreen().bounds.height / 2.0))
+        let gif = UIImage.animatedImage(with: frames, duration: self.duration)
+        self.gifView = UIImageView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width / 2.0, height: UIScreen.main.bounds.height / 2.0))
         self.gifView.center = self.view.center
         self.gifView.image = gif
         self.view.insertSubview(self.gifView, belowSubview: self.activityIndicator)
     }
     
-    @IBAction func saveButtonPressed(sender: AnyObject) {
+    @IBAction func saveButtonPressed(_ sender: AnyObject) {
         self.activityIndicator.startAnimating()
-        UIApplication.sharedApplication().beginIgnoringInteractionEvents()
-        let temporaryFile = (NSTemporaryDirectory() as NSString).stringByAppendingPathComponent("temp")
-        let fileOutputURL = NSURL(fileURLWithPath: temporaryFile)
-        let destination = CGImageDestinationCreateWithURL(fileOutputURL, kUTTypeGIF, self.bitmaps.count, nil)
+        UIApplication.shared.beginIgnoringInteractionEvents()
+        let temporaryFile = (NSTemporaryDirectory() as NSString).appendingPathComponent("temp")
+        let fileOutputURL = URL(fileURLWithPath: temporaryFile)
+        let destination = CGImageDestinationCreateWithURL(fileOutputURL as CFURL, kUTTypeGIF, self.bitmaps.count, nil)
         let fileProperties = [kCGImagePropertyGIFDictionary as String:[kCGImagePropertyGIFLoopCount as String: 0]]
         let frameProperties = [kCGImagePropertyGIFDictionary as String:[kCGImagePropertyGIFDelayTime as String: self.duration / Double(self.bitmaps.count)]]
-        CGImageDestinationSetProperties(destination!, fileProperties as CFDictionaryRef)
+        CGImageDestinationSetProperties(destination!, fileProperties as CFDictionary)
         
         for bitmap in self.bitmaps! {
-            CGImageDestinationAddImage(destination!, bitmap, frameProperties as CFDictionaryRef)
+            CGImageDestinationAddImage(destination!, bitmap, frameProperties as CFDictionary)
         }
         
-        CGImageDestinationSetProperties(destination!, fileProperties as CFDictionaryRef)
+        CGImageDestinationSetProperties(destination!, fileProperties as CFDictionary)
         
         if CGImageDestinationFinalize(destination!) {
             
             let library = ALAssetsLibrary()
-            let gifData = NSData(contentsOfURL: fileOutputURL)!
-            library.writeImageDataToSavedPhotosAlbum(gifData, metadata: nil) { ( url, error) -> Void in
-                dispatch_async(dispatch_get_main_queue()) {
+            let gifData = try! Data(contentsOf: fileOutputURL)
+            library.writeImageData(toSavedPhotosAlbum: gifData, metadata: nil) { ( url, error) -> Void in
+                DispatchQueue.main.async {
                     self.activityIndicator.stopAnimating()
-                    UIApplication.sharedApplication().endIgnoringInteractionEvents()
-                    self.dismissViewControllerAnimated(true) { () -> Void in
+                    UIApplication.shared.endIgnoringInteractionEvents()
+                    self.dismiss(animated: true) { () -> Void in
                         
                     }
                 }
@@ -81,8 +81,8 @@ class PreviewViewController: UIViewController {
         }
     }
     
-    @IBAction func closeButtonPressed(sender: AnyObject) {
-        dismissViewControllerAnimated(true) { () -> Void in
+    @IBAction func closeButtonPressed(_ sender: AnyObject) {
+        dismiss(animated: true) { () -> Void in
             
         }
     }

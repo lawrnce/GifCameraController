@@ -20,33 +20,33 @@ class ViewController: UIViewController {
         setupCameraController()
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.gifCamera.startSession()
     }
     
-    override func prefersStatusBarHidden() -> Bool {
+    override var prefersStatusBarHidden : Bool {
         return true
     }
     
-    private func setupPreviewView() {
+    fileprivate func setupPreviewView() {
         self.previewView = GifCameraPreviewView(frame: CGRect(x: 0, y: 0,
-            width: UIScreen.mainScreen().bounds.width, height: UIScreen.mainScreen().bounds.height))
+            width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height))
         self.view.addSubview(self.previewView)
     }
     
-    private func setupRecordButton() {
+    fileprivate func setupRecordButton() {
         self.recordButton = UIButton(frame: CGRect(x: 0, y: 0, width: 80, height: 80))
-        self.recordButton.addTarget(self, action: Selector("recordButtonPressed:"), forControlEvents: .TouchUpInside)
-        self.recordButton.backgroundColor = UIColor.redColor()
+        self.recordButton.addTarget(self, action: #selector(ViewController.recordButtonPressed(_:)), for: .touchUpInside)
+        self.recordButton.backgroundColor = UIColor.red
         self.recordButton.layer.cornerRadius = 40.0
         self.recordButton.clipsToBounds = true
-        self.recordButton.center = CGPoint(x: UIScreen.mainScreen().bounds.width / 2.0,
-            y: UIScreen.mainScreen().bounds.height * 0.9)
+        self.recordButton.center = CGPoint(x: UIScreen.main.bounds.width / 2.0,
+            y: UIScreen.main.bounds.height * 0.9)
         self.view.addSubview(self.recordButton)
     }
     
-    private func setupCameraController() {
+    fileprivate func setupCameraController() {
         self.gifCamera = GifCameraController()
         do {
             if try self.gifCamera.setupSession() {
@@ -71,7 +71,7 @@ class ViewController: UIViewController {
     }
     
     // MARK: - Actions
-    func recordButtonPressed(sender: UIButton) {
+    func recordButtonPressed(_ sender: UIButton) {
         self.gifCamera.startRecording()
     }
 }
@@ -81,31 +81,31 @@ extension ViewController: GifCameraControllerDelegate {
     //  Flash the screen when a new frame is taken
     //
     //
-    func cameraController(cameraController: GifCameraController, didAppendFrameNumber index: Int) {
+    func cameraController(_ cameraController: GifCameraController, didAppendFrameNumber index: Int) {
         
-        print(index, NSDate().timeIntervalSince1970)
+        print(index, Date().timeIntervalSince1970)
         
-        dispatch_async(dispatch_get_main_queue()) { () -> Void in
-            UIView.animateWithDuration(0.08, animations: { () -> Void in
+        DispatchQueue.main.async { () -> Void in
+            UIView.animate(withDuration: 0.08, animations: { () -> Void in
                 self.previewView.alpha = 0.7
-                }) { (done) -> Void in
-                    UIView.animateWithDuration(0.08, animations: { () -> Void in
+                }, completion: { (done) -> Void in
+                    UIView.animate(withDuration: 0.08, animations: { () -> Void in
                         self.previewView.alpha = 1.0
                         }, completion: { (done) -> Void in
                             
                     })
-            }
+            }) 
         }
     }
     
     //  Open gif in new view
     //
     //
-    func cameraController(cameraController: GifCameraController, didFinishRecordingWithFrames frames: [CGImage], withTotalDuration duration: Double) {
-        let previewVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("previewVC") as! PreviewViewController
+    func cameraController(_ cameraController: GifCameraController, didFinishRecordingWithFrames frames: [CGImage], withTotalDuration duration: Double) {
+        let previewVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "previewVC") as! PreviewViewController
         previewVC.bitmaps = frames
         previewVC.duration = duration
-        presentViewController(previewVC, animated: true) { () -> Void in            
+        present(previewVC, animated: true) { () -> Void in            
         }
     }
 }

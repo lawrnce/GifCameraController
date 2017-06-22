@@ -1,20 +1,16 @@
 PODS:
   - GifCameraController (0.1.0)
-  - Nimble (3.2.0)
-  - Quick (0.9.1)
 
 DEPENDENCIES:
   - GifCameraController (from `../`)
-  - Nimble (~> 3.0)
-  - Quick (~> 0.8)
 
 EXTERNAL SOURCES:
   GifCameraController:
-    :path: ../
+    :path: "../"
 
 SPEC CHECKSUMS:
-  GifCameraController: 1c5e552b59e6dd543d6acf83de2c3039cbd17c5a
-  Nimble: 703854335d181df169bbca9c97117b5cf8c47c1d
-  Quick: a5221fc21788b6aeda934805e68b061839bc3165
+  GifCameraController: 9aaccf46799e734c2c27f2702b47c7e41855e290
 
-COCOAPODS: 0.39.0
+PODFILE CHECKSUM: 1390226d4df1f6f911aea6da76332171a8df8868
+
+COCOAPODS: 1.2.1
