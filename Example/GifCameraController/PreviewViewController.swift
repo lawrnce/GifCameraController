@@ -24,12 +24,12 @@ class PreviewViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupGif()
-        self.view.backgroundColor = UIColor.white
+        view.backgroundColor = UIColor.white
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.activityIndicator.hidesWhenStopped = true
+        activityIndicator.hidesWhenStopped = true
     }
 
     override func didReceiveMemoryWarning() {
@@ -42,31 +42,31 @@ class PreviewViewController: UIViewController {
             let image = UIImage(cgImage: bitmap)
             frames.append(image)
         }
-        let gif = UIImage.animatedImage(with: frames, duration: self.duration)
-        self.gifView = UIImageView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width / 2.0, height: UIScreen.main.bounds.height / 2.0))
-        self.gifView.center = self.view.center
-        self.gifView.image = gif
-        self.view.insertSubview(self.gifView, belowSubview: self.activityIndicator)
+        let gif = UIImage.animatedImage(with: frames, duration: duration)
+        gifView = UIImageView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width / 2.0, height: UIScreen.main.bounds.height / 2.0))
+        gifView.center = view.center
+        gifView.image = gif
+        view.insertSubview(self.gifView, belowSubview: activityIndicator)
     }
     
     @IBAction func saveButtonPressed(_ sender: AnyObject) {
-        self.activityIndicator.startAnimating()
+        activityIndicator.startAnimating()
         UIApplication.shared.beginIgnoringInteractionEvents()
         let temporaryFile = (NSTemporaryDirectory() as NSString).appendingPathComponent("temp")
         let fileOutputURL = URL(fileURLWithPath: temporaryFile)
-        let destination = CGImageDestinationCreateWithURL(fileOutputURL as CFURL, kUTTypeGIF, self.bitmaps.count, nil)
+        let destination = CGImageDestinationCreateWithURL(fileOutputURL as CFURL, kUTTypeGIF, bitmaps.count, nil)
         let fileProperties = [kCGImagePropertyGIFDictionary as String:[kCGImagePropertyGIFLoopCount as String: 0]]
-        let frameProperties = [kCGImagePropertyGIFDictionary as String:[kCGImagePropertyGIFDelayTime as String: self.duration / Double(self.bitmaps.count)]]
+        let frameProperties = [kCGImagePropertyGIFDictionary as String:[kCGImagePropertyGIFDelayTime as String: duration / Double(bitmaps.count)]]
         CGImageDestinationSetProperties(destination!, fileProperties as CFDictionary)
         
-        for bitmap in self.bitmaps! {
+        for bitmap in bitmaps! {
             CGImageDestinationAddImage(destination!, bitmap, frameProperties as CFDictionary)
         }
         
         CGImageDestinationSetProperties(destination!, fileProperties as CFDictionary)
         
         if CGImageDestinationFinalize(destination!) {
-            
+          
             let library = ALAssetsLibrary()
             let gifData = try! Data(contentsOf: fileOutputURL)
             library.writeImageData(toSavedPhotosAlbum: gifData, metadata: nil) { ( url, error) -> Void in

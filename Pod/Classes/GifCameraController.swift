@@ -60,14 +60,14 @@ open class GifCameraController: NSObject {
   //
   //
   open func setupSession() throws -> Bool {
-    self.captureSession = AVCaptureSession()
-    self.captureSession.sessionPreset = AVCaptureSessionPresetiFrame1280x720
-    self.maxDuration = 4.0
-    self.framesPerSecond = 18
-    self.recording = false
-    self.paused = false
-    self.shouldTorch = false
-    self.videoDataOutputQueue = DispatchQueue(label: "com.cakegifs.VideoDataOutputQueue", attributes: [])
+    captureSession = AVCaptureSession()
+    captureSession.sessionPreset = AVCaptureSessionPresetiFrame1280x720
+    maxDuration = 4.0
+    framesPerSecond = 18
+    recording = false
+    paused = false
+    shouldTorch = false
+    videoDataOutputQueue = DispatchQueue(label: "GifCameraControllerVideoDataOutputQueue", attributes: [])
     do {
       try setupSessionInputs()
       try setupSessionOutputs()
@@ -87,16 +87,16 @@ open class GifCameraController: NSObject {
   //  preview view is stored to crop the frames.
   //
   open func setPreviewView(_ view: GifCameraPreviewView) {
-    self.previewBounds  = view.drawableBounds
-    self.previewTarget = view
+    previewBounds  = view.drawableBounds
+    previewTarget = view
   }
   
   //  Starts the capture session.
   //
   //
   open func startSession() {
-    if !self.captureSession.isRunning {
-      self.videoDataOutputQueue.async(execute: { () -> Void in
+    if !captureSession.isRunning {
+      videoDataOutputQueue.async(execute: { () -> Void in
         self.captureSession.startRunning()
       })
     }
@@ -106,8 +106,8 @@ open class GifCameraController: NSObject {
   //
   //
   open func stopSession() {
-    if self.captureSession.isRunning {
-      self.videoDataOutputQueue.async(execute: { () -> Void in
+    if captureSession.isRunning {
+      videoDataOutputQueue.async(execute: { () -> Void in
         self.captureSession.stopRunning()
       })
     }
@@ -117,19 +117,19 @@ open class GifCameraController: NSObject {
   //
   //
   open func isRecording() -> Bool {
-    return self.recording
+    return recording
   }
   
   //  Starts recording.
   //
   //
   open func startRecording() {
-    if !self.isRecording() {
-      if self.bitmaps == nil {
+    if !isRecording() {
+      if bitmaps == nil {
         prepareForRecording()
       }
-      self.recording = true
-      self.paused = false
+      recording = true
+      paused = false
     }
   }
   
@@ -137,9 +137,9 @@ open class GifCameraController: NSObject {
   //  Does not reset variables.
   //
   open func pauseRecording() {
-    if self.isRecording() == true {
-      self.recording = false
-      self.paused = true
+    if isRecording() == true {
+      recording = false
+      paused = true
     }
   }
   
@@ -148,14 +148,14 @@ open class GifCameraController: NSObject {
   //
   open func cancelRecording() {
     toggleTorch(forceKill: true)
-    self.bitmaps = nil
-    self.totalRecordedDuration = nil
-    self.differenceDuration = nil
-    self.pausedDuration = CMTime(seconds: 0, preferredTimescale: 600)
-    self.recording = false
-    self.paused = false
-    self.currentFrame = 0
-    self.timePoints = nil
+    bitmaps = nil
+    totalRecordedDuration = nil
+    differenceDuration = nil
+    pausedDuration = CMTime(seconds: 0, preferredTimescale: 600)
+    recording = false
+    paused = false
+    currentFrame = 0
+    timePoints = nil
   }
   
   //  Ends the recording
@@ -163,47 +163,47 @@ open class GifCameraController: NSObject {
   //
   open func stopRecording() {
     toggleTorch(forceKill: true)
-    self.delegate?.cameraController(self, didFinishRecordingWithFrames: self.bitmaps!, withTotalDuration: self.totalRecordedDuration.seconds)
-    self.totalRecordedDuration = nil
-    self.differenceDuration = nil
-    self.timePoints = nil
-    self.bitmaps = nil
-    self.pausedDuration = CMTime(seconds: 0, preferredTimescale: 600)
-    self.recording = false
-    self.paused = false
-    self.currentFrame = 0
+    delegate?.cameraController(self, didFinishRecordingWithFrames: bitmaps!, withTotalDuration: totalRecordedDuration.seconds)
+    totalRecordedDuration = nil
+    differenceDuration = nil
+    timePoints = nil
+    bitmaps = nil
+    pausedDuration = CMTime(seconds: 0, preferredTimescale: 600)
+    recording = false
+    paused = false
+    currentFrame = 0
   }
   
   //  Toggles between the front camera and the back.
   //
   //
   open func toggleCamera() {
-    self.captureSession.removeInput(self.activeVideoInput)
+    captureSession.removeInput(activeVideoInput)
     
     do {
-      if self.activeVideoInput.device == self.frontCameraDevice {
-        self.activeVideoInput = nil
-        self.activeVideoInput = try AVCaptureDeviceInput(device: self.backCameraDevice)
-        self.currentDevicePosition = .back
+      if activeVideoInput.device == frontCameraDevice {
+        activeVideoInput = nil
+        activeVideoInput = try AVCaptureDeviceInput(device: backCameraDevice)
+        currentDevicePosition = .back
         
-      } else if self.activeVideoInput.device == self.backCameraDevice {
-        self.activeVideoInput = nil
-        self.activeVideoInput = try AVCaptureDeviceInput(device: self.frontCameraDevice)
-        self.currentDevicePosition = .front
+      } else if activeVideoInput.device == backCameraDevice {
+        activeVideoInput = nil
+        activeVideoInput = try AVCaptureDeviceInput(device: frontCameraDevice)
+        currentDevicePosition = .front
       }
       
-      if self.captureSession.canAddInput(self.activeVideoInput) {
-        self.captureSession.addInput(self.activeVideoInput)
+      if captureSession.canAddInput(activeVideoInput) {
+        captureSession.addInput(activeVideoInput)
       } else {
         throw GifCameraControllerError.failedToAddInput
       }
       
-      self.videoDataOutput.connection(withMediaType: AVMediaTypeVideo).videoOrientation = .portrait
+      videoDataOutput.connection(withMediaType: AVMediaTypeVideo).videoOrientation = .portrait
     } catch let error as NSError {
       print(error.localizedDescription)
     }
     
-    if (self.shouldTorch == true) {
+    if (shouldTorch == true) {
       let seconds = 0.4
       let delay = seconds * Double(NSEC_PER_SEC)
       let dispatchTime = DispatchTime.now() + Double(Int64(delay)) / Double(NSEC_PER_SEC)
@@ -218,17 +218,17 @@ open class GifCameraController: NSObject {
   //
   open func toggleTorch(forceKill: Bool) -> Bool {
     var isOn = Bool()
-    let device = self.activeVideoInput.device
+    let device = activeVideoInput.device
     if (device?.hasTorch)! {
       do {
         try device?.lockForConfiguration()
         if device?.torchMode == .on || forceKill {
           device?.torchMode = AVCaptureTorchMode.off
-          self.shouldTorch = false
+          shouldTorch = false
           isOn = false
         } else {
           try device?.setTorchModeOnWithLevel(1.0)
-          self.shouldTorch = true
+          shouldTorch = true
           isOn = true
         }
         device?.unlockForConfiguration()
@@ -267,13 +267,13 @@ open class GifCameraController: NSObject {
   fileprivate var shouldTorch: Bool!
   
   fileprivate func prepareForRecording() {
-    self.bitmaps = [CGImage]()
-    self.pausedDuration = CMTime(seconds: 0, preferredTimescale: 600)
-    self.paused = false
-    self.currentFrame = 0
-    self.timePoints = [CMTime]()
-    let totalFrames = self.getTotalFrames()
-    let increment = self.maxDuration / Double(totalFrames)
+    bitmaps = [CGImage]()
+    pausedDuration = CMTime(seconds: 0, preferredTimescale: 600)
+    paused = false
+    currentFrame = 0
+    timePoints = [CMTime]()
+    let totalFrames = getTotalFrames()
+    let increment = maxDuration / Double(totalFrames)
     for frameNumber in 0 ..< totalFrames {
       let seconds: Float64 = Float64(increment) * Float64(frameNumber)
       let time = CMTimeMakeWithSeconds(seconds, 600)
@@ -282,44 +282,44 @@ open class GifCameraController: NSObject {
   }
   
   fileprivate func getDelayTime() -> Float {
-    return Float(self.maxDuration) / Float(getTotalFrames())
+    return Float(maxDuration) / Float(getTotalFrames())
   }
   
   fileprivate func getTotalFrames() -> Int {
-    return Int(self.framesPerSecond * Int(self.maxDuration))
+    return Int(framesPerSecond * Int(maxDuration))
   }
   
   fileprivate func setupSessionInputs() throws {
     for device in AVCaptureDevice.devices() {
       if (device as AnyObject).position == .front {
-        self.frontCameraDevice = (device as? AVCaptureDevice)!
+        frontCameraDevice = (device as? AVCaptureDevice)!
       } else if (device as AnyObject).position == .back {
-        self.backCameraDevice = (device as? AVCaptureDevice)!
+        backCameraDevice = (device as? AVCaptureDevice)!
       }
     }
     do {
-      self.frontVideoInput = try AVCaptureDeviceInput(device: self.frontCameraDevice)
-      if self.captureSession.canAddInput(self.frontVideoInput) {
-        self.captureSession.addInput(self.frontVideoInput)
+      frontVideoInput = try AVCaptureDeviceInput(device: frontCameraDevice)
+      if captureSession.canAddInput(frontVideoInput) {
+        captureSession.addInput(frontVideoInput)
       } else {
         throw GifCameraControllerError.failedToAddInput
       }
-      self.activeVideoInput = self.frontVideoInput
-      self.currentDevicePosition = .front
+      activeVideoInput = frontVideoInput
+      currentDevicePosition = .front
     } catch let error as NSError {
       print(error.localizedDescription)
     }
   }
   
   fileprivate func setupSessionOutputs() throws {
-    self.videoDataOutput = AVCaptureVideoDataOutput()
-    self.videoDataOutput.setSampleBufferDelegate(self, queue: self.videoDataOutputQueue)
-    self.videoDataOutput.alwaysDiscardsLateVideoFrames = true
-    if self.captureSession.canAddOutput(self.videoDataOutput) {
-      self.captureSession.addOutput(self.videoDataOutput)
-      self.videoDataOutput.connection(withMediaType: AVMediaTypeVideo).videoOrientation = .portrait
-      if self.videoDataOutput.connection(withMediaType: AVMediaTypeVideo).isVideoStabilizationSupported {
-        self.videoDataOutput.connection(withMediaType: AVMediaTypeVideo).preferredVideoStabilizationMode = .cinematic
+    videoDataOutput = AVCaptureVideoDataOutput()
+    videoDataOutput.setSampleBufferDelegate(self, queue: videoDataOutputQueue)
+    videoDataOutput.alwaysDiscardsLateVideoFrames = true
+    if captureSession.canAddOutput(videoDataOutput) {
+      captureSession.addOutput(videoDataOutput)
+      videoDataOutput.connection(withMediaType: AVMediaTypeVideo).videoOrientation = .portrait
+      if videoDataOutput.connection(withMediaType: AVMediaTypeVideo).isVideoStabilizationSupported {
+        videoDataOutput.connection(withMediaType: AVMediaTypeVideo).preferredVideoStabilizationMode = .cinematic
       }
     } else {
       throw GifCameraControllerError.failedToAddOutput
@@ -348,10 +348,10 @@ open class GifCameraController: NSObject {
   fileprivate func getCroppedPreviewImageFromBuffer(_ buffer: CMSampleBuffer) -> CIImage {
     let imageBuffer: CVPixelBuffer = CMSampleBufferGetImageBuffer(buffer)!
     let sourceImage: CIImage = CIImage(cvPixelBuffer: imageBuffer).copy() as! CIImage
-    let cropRect = centerCropImageRect(sourceImage.extent, previewRect: self.previewBounds)
+    let cropRect = centerCropImageRect(sourceImage.extent, previewRect: previewBounds)
     let croppedSourceImage = sourceImage.cropping(to: cropRect)
     let transform: CGAffineTransform!
-    if self.currentDevicePosition == .front {
+    if currentDevicePosition == .front {
       transform = CGAffineTransform(scaleX: -1.0, y: 1.0)
     } else {
       transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
@@ -386,34 +386,33 @@ extension GifCameraController: AVCaptureVideoDataOutputSampleBufferDelegate {
   public func captureOutput(_ captureOutput: AVCaptureOutput!,
                             didOutputSampleBuffer sampleBuffer: CMSampleBuffer!,
                             from connection: AVCaptureConnection!) {
-    if captureOutput == self.videoDataOutput {
+    if captureOutput == videoDataOutput {
       let previewImage = getCroppedPreviewImageFromBuffer(sampleBuffer)
-      self.previewTarget?.setImage(previewImage)
+      previewTarget?.setImage(previewImage)
       let sampleTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer).convertScale(600,
                                                                                          method: .roundAwayFromZero)
-      if self.recording == true {
-        if self.differenceDuration == nil {
-          self.differenceDuration = sampleTime
-        } else if self.pausedDuration > CMTime(seconds: 0, preferredTimescale: 600) {
-          self.differenceDuration = CMTimeAdd(self.differenceDuration, self.pausedDuration)
-          self.pausedDuration = CMTime(seconds: 0, preferredTimescale: 600)
+      if recording == true {
+        if differenceDuration == nil {
+          differenceDuration = sampleTime
+        } else if pausedDuration > CMTime(seconds: 0, preferredTimescale: 600) {
+          differenceDuration = CMTimeAdd(differenceDuration, pausedDuration)
+          pausedDuration = CMTime(seconds: 0, preferredTimescale: 600)
         }
-        self.totalRecordedDuration = CMTimeSubtract(sampleTime, self.differenceDuration)
+        totalRecordedDuration = CMTimeSubtract(sampleTime, differenceDuration)
         
-        if self.totalRecordedDuration >= self.timePoints[self.currentFrame] {
-          self.bitmaps.append(convertCIImageToCGImage(previewImage))
-          delegate?.cameraController(self, didAppendFrameNumber: self.bitmaps.count)
+        if totalRecordedDuration >= timePoints[currentFrame] {
+          bitmaps.append(convertCIImageToCGImage(previewImage))
+          delegate?.cameraController(self, didAppendFrameNumber: bitmaps.count)
           
-          if (self.timePoints.count - 1) == self.currentFrame {
-            self.stopRecording()
+          if (timePoints.count - 1) == currentFrame {
+            stopRecording()
           } else {
-            self.currentFrame = self.currentFrame + 1
+            currentFrame = currentFrame + 1
           }
         }
-      } else if self.paused == true {
-        if self.totalRecordedDuration != nil && self.differenceDuration != nil {
-          self.pausedDuration = CMTimeSubtract(CMTimeSubtract(sampleTime, self.totalRecordedDuration),
-                                               self.differenceDuration)
+      } else if paused == true {
+        if totalRecordedDuration != nil && differenceDuration != nil {
+          pausedDuration = CMTimeSubtract(CMTimeSubtract(sampleTime, totalRecordedDuration), differenceDuration)
         }
       }
     }

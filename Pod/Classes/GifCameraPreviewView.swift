@@ -23,16 +23,16 @@ open class GifCameraPreviewView: GLKView, PreviewTarget {
     
     override public init(frame: CGRect) {
         super.init(frame: frame, context: GifContextManager.sharedInstance.eaglContext)
-        self.enableSetNeedsDisplay = false
-        self.isOpaque = true
+        enableSetNeedsDisplay = false
+        isOpaque = true
         self.frame = frame
-        self.backgroundColor = UIColor.cyan
+        backgroundColor = UIColor.cyan
         
-        self.bindDrawable()
-        self.drawableBounds = self.bounds
-        self.drawableBounds.size.width = CGFloat(self.drawableWidth)
-        self.drawableBounds.size.height = CGFloat(self.drawableHeight)
-        self.coreImageContext = GifContextManager.sharedInstance.ciContext
+        bindDrawable()
+        drawableBounds = bounds
+        drawableBounds.size.width = CGFloat(drawableWidth)
+        drawableBounds.size.height = CGFloat(drawableHeight)
+        coreImageContext = GifContextManager.sharedInstance.ciContext
     }
     
     required public init?(coder aDecoder: NSCoder) {
@@ -40,9 +40,9 @@ open class GifCameraPreviewView: GLKView, PreviewTarget {
     }
     
     func setImage(_ sourceImage: CIImage) {
-        self.bindDrawable()
-        self.coreImageContext.draw(sourceImage, in: self.drawableBounds, from: sourceImage.extent)
-        self.display()
+        bindDrawable()
+        coreImageContext.draw(sourceImage, in: drawableBounds, from: sourceImage.extent)
+        display()
     }
 }
 
@@ -52,8 +52,8 @@ class GifContextManager: NSObject {
     var ciContext: CIContext!
     override init() {
         super.init()
-        self.eaglContext = EAGLContext(api: .openGLES2)
+        eaglContext = EAGLContext(api: .openGLES2)
         let options: [String : AnyObject] = [kCIContextWorkingColorSpace: NSNull()]
-        self.ciContext = CIContext(eaglContext: self.eaglContext, options: options)
+        ciContext = CIContext(eaglContext: eaglContext, options: options)
     }
 }
