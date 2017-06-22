@@ -290,6 +290,9 @@
 					2E9300179473D2545A77107CB6CD3959 = {
 						LastSwiftMigration = 0830;
 					};
+					3AE75F467F87461DAFF43575473F6E4C = {
+						LastSwiftMigration = 0830;
+					};
 					E77CC48466076B2D4B9AB7305CD3087C = {
 						LastSwiftMigration = 0830;
 					};
@@ -509,6 +512,7 @@
 				PRODUCT_NAME = GifCameraController;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = bundle;
 			};
@@ -564,6 +568,7 @@
 				PRODUCT_NAME = GifCameraController;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = bundle;
 			};
